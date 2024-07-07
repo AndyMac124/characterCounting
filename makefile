@@ -1,18 +1,16 @@
 COMPILER = gcc
 CFLAGS = -Wall -pedantic
+COBJS = char_count_utils.o files.o ring_process.o
 
 EXES = char_count
 
 all: ${EXES}
 
-char_count:	char_count.c files.o ring_process.o
-	${COMPILER} ${CFLAGS} char_count.c files.o ring_process.o -o char_count
+char_count:	char_count.c ${COBJS}
+	${COMPILER} ${CFLAGS} char_count.c ${COBJS} -o char_count
 
-files.o: files.c
-	${COMPILER} ${CFLAGS} -c files.c
-
-ring_process.o: ring_process.c
-	${COMPILER} ${CFLAGS} -c ring_process.c
+%.o: %.c %.h makefile
+	${COMPILER} ${CFLAGS} $< -c
 
 clean:
 	rm -f *~ *.o ${EXES}
