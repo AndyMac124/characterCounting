@@ -1,10 +1,17 @@
+/*
+ * File: file_handling.c
+ * Author: Andrew McKenzie
+ * UNE Email: amcken33@myune.edu.au
+ * Student Number: 220263507
+ */
+
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
 #include <stdio.h>
 #include <ctype.h>
 
-#include "files.h"
+#include "file_handling.h"
 
 #define MAX_FILENAME 256
 
@@ -23,6 +30,10 @@ int get_num_files(const char* directory)
         dp = opendir(directory);
 
         while ((dirp = readdir(dp)) != NULL) {
+                /* Confirming file type and ignoring hidden files.
+                 * This was an issue in MacOS but not Linux, so I've
+                 * left it in as a precaution.
+                 */
                 if (dirp->d_type == DT_REG && dirp->d_name[0] != '.') {
                         count++;
                 }
@@ -52,8 +63,15 @@ void get_file_names(char** filesArray, const char* directory)
         int index = 0;
 
         while((dirp = readdir(dp)) != NULL) {
+                /* Confirming file type and ignoring hidden files.
+                 * This was an issue in MacOS but not Linux, so I've
+                 * left it in as a precaution.
+                 */
                 if (dirp->d_type == DT_REG && dirp->d_name[0] != '.') {
-                        filesArray[index] = (char*)malloc((strlen(dirp->d_name) + 1) * sizeof(char));
+                        // Allocating the space for the name
+                        filesArray[index] = (char*)malloc((strlen
+                                (dirp->d_name) + 1) * sizeof(char));
+                        // Copying the name into the index
                         strcpy(filesArray[index], dirp->d_name);
                         index++;
                 }
@@ -78,16 +96,17 @@ void get_file_names(char** filesArray, const char* directory)
  */
 long calc_file_counts(char inFile[], long char_stats[], const char* directory)
 {
-        char cur_fname[MAX_FILENAME] = "";
-        strcpy(cur_fname, directory);
-        strcat(cur_fname, "/");
-        strcat(cur_fname, inFile);
+        char cur_fname[MAX_FILENAME] = ""; // Allocating array space
+        strcpy(cur_fname, directory);  // Copying directory name into array
+        strcat(cur_fname, "/"); // Adding slash for subdirectory
+        strcat(cur_fname, inFile); // Adding file name
 
         FILE* file = fopen(cur_fname, "r");
         if (file == NULL) {
                 perror("Failed to open specified file");
                 exit(1);
         }
+
         char c;
         long char_count = 0;
 
@@ -101,6 +120,8 @@ long calc_file_counts(char inFile[], long char_stats[], const char* directory)
                 }
                 char_count += 1;
         }
+
         fclose(file);
+
         return char_count;
 }

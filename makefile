@@ -1,6 +1,6 @@
 COMPILER = gcc
 CFLAGS = -Wall -pedantic
-COBJS = char_count_utils.o files.o ring_process.o
+COBJS = char_count_utils.o file_handling.o ring_process.o
 
 EXES = char_count
 
