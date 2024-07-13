@@ -1,7 +1,3 @@
-//
-// Created by Andrew Mckenzie on 7/7/2024.
-//
-
 #ifndef A1_CHAR_COUNT_UTILS_H
 #define A1_CHAR_COUNT_UTILS_H
 

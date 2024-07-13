@@ -1,6 +1,3 @@
-//
-// Created by Andrew Mckenzie on 7/7/2024.
-//
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
@@ -9,40 +6,42 @@
 
 #include "files.h"
 
+#define MAX_FILENAME 256
+
 int calc_num_files(const char* directory) {
-        DIR* dir;
-        struct dirent* file;
+        DIR* dp;
+        struct dirent* dirp;
         int count = 0;
 
-        dir = opendir(directory);
+        dp = opendir(directory);
 
-        while ((file = readdir(dir)) != NULL) {
-                if (file->d_type == DT_REG && file->d_name[0] != '.') {
+        while ((dirp = readdir(dp)) != NULL) {
+                if (dirp->d_type == DT_REG && dirp->d_name[0] != '.') {
                         count++;
                 }
         }
 
-        closedir(dir);
+        closedir(dp);
 
         return count;
 }
 
 void get_file_names(char** filesArray, const char* directory){
-        DIR* dir;
-        struct dirent* file;
-        dir = opendir(directory);
+        DIR* dp;
+        struct dirent* dirp;
+        dp = opendir(directory);
         int index = 0;
 
-        while((file = readdir(dir)) != NULL) {
-                if (file->d_type == DT_REG && file->d_name[0] != '.') {
+        while((dirp = readdir(dp)) != NULL) {
+                if (dirp->d_type == DT_REG && dirp->d_name[0] != '.') {
                         filesArray[index] = (char*)malloc((strlen
-                                                                   (file->d_name) + 1) * sizeof(char));
-                        strcpy(filesArray[index], file->d_name);
+                                                                   (dirp->d_name) + 1) * sizeof(char));
+                        strcpy(filesArray[index], dirp->d_name);
                         index++;
                 }
         }
 
-        closedir(dir);
+        closedir(dp);
 }
 
 long calc_file_counts(char inFile[], long char_stats[], const char* directory) {
