@@ -8,8 +8,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <dirent.h>
+#include <string.h>
 
-#define BARLENGTH 60
+#include "char_count_utils.h"
 
 /**
  * valid_directory() - Checks if argument is a valid directroy.
@@ -21,7 +22,20 @@
  */
 int valid_directory(char *dir_name)
 {
+        // If the given directory started with a slash, remove it.
+        if (dir_name[0] == '/') {
+                dir_name = dir_name + 1;
+        }
+
+        int length = strlen(dir_name);
+
+        // If the given directory ended with a slash, remove it.
+        if (dir_name[length-1] == '/') {
+                dir_name[length - 1] = '\0';
+        }
+
         DIR *dir = opendir(dir_name);
+
         if (dir) {
                 closedir(dir);
                 return (0);
@@ -44,7 +58,7 @@ int parse_args(int argc, char *argv[], int *nprocs)
 {
         // Checking number of args, and number of processes is int.
         if ((argc != 3) || ((*nprocs = atoi(argv[1])) <= 0)) {
-                fprintf (stderr, "Usage: %s nprocs\n", argv[0]);
+                fprintf(stderr, "Usage: %s nprocs\n", argv[0]);
                 return(-1);
         }
 

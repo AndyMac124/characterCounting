@@ -7,6 +7,8 @@
 
 #include <unistd.h>
 #include <stdbool.h>
+#include <stdio.h>
+
 #include "ring_process.h"
 
 /**
@@ -89,7 +91,12 @@ int add_new_node(int *pid)
  */
 void send_subtotal(long char_counts[])
 {
-        write(STDOUT_FILENO, char_counts, 26 * sizeof(long));
+        int written;
+        written = write(STDOUT_FILENO,
+                        char_counts, 26 * sizeof(long));
+        if (written < 0) {
+                perror("Error writing to standard out");
+        }
 }
 
 /**
@@ -102,8 +109,15 @@ void send_subtotal(long char_counts[])
  */
 void read_subtotal(long char_counts[], bool to_add)
 {
+        int bytes;
+
         long temp_counts[26] = {0};
-        read(STDIN_FILENO, temp_counts, 26 * sizeof(long));
+        bytes = read(STDIN_FILENO, temp_counts, 26 * sizeof(long));
+
+        if (bytes < 0) {
+                perror("Error reading from standard in");
+        }
+
         for (int i = 0; i < 26; i++) {
                 if (to_add) {
                         char_counts[i] += temp_counts[i];

@@ -1,10 +1,3 @@
-/*
- * File: char_count.c
- * Author: Andrew McKenzie
- * UNE Email: amcken33@myune.edu.au
- * Student Number: 220263507
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,6 +8,30 @@
 #include "ring_process.h"
 #include "file_handling.h"
 #include "char_count_utils.h"
+
+
+/**
+ * File: char_count.c
+ *
+ * Author: Andrew McKenzie
+ * UNE Email: amcken33@myune.edu.au
+ * Student Number: 220263507
+ *
+ * Purpose: This program creates a ring of processes and a directory containing
+ * text files and divides them between the ring of processes. The processes
+ * count the frequency of the basic A-Z characters and pass them around the
+ * ring until the original mother process gets them and prints their totals
+ * and a histogram of their frequencies.
+ *
+ * Compiling: The include makefile can be run with the 'make' command.
+ *
+ * Running: The program is run by the following:
+ *          ./char_count <int - number of processes> <directory>
+ *
+ * For more detailed instructions, please see the README.md
+ */
+
+
 
 /**
  * main() - Main function for character frequency counting program.
@@ -35,7 +52,7 @@ int main (int argc, char *argv[])
         int i;          // Number of this process, starting with 1
         int childpid;   // Indicates process should spawn another
         int nprocs;     // Total number of processes in ring
-        long char_counts[26] = {0}; // Holds count of the 26 characters
+        long char_counts[ALL_CHARS] = {0}; // Holds count of the 26 characters
 
         // Checking if the given args were correct
         if (parse_args(argc, argv, &nprocs) < 0) {
@@ -45,11 +62,28 @@ int main (int argc, char *argv[])
         // Setting the number of processes in the ring
         nprocs = atoi(argv[1]);
 
+        // If the given directory started with a slash, remove it.
+        if (argv[2][0] == '/') {
+                argv[2] = argv[2] + 1;
+        }
+
+        int length = strlen(argv[2]);
+
+        // If the given directory ended with a slash, remove it.
+        if (argv[2][length-1] == '/') {
+                argv[2][length - 1] = '\0';
+        }
+
         // Assigning the directory for the text files
         const char* TEXT_DIR = argv[2];
 
         // Calculating the number of files
         int numFiles = get_num_files(TEXT_DIR);
+
+        if (numFiles < 0) {
+                perror("Failed to open directory");
+                exit(EXIT_FAILURE);
+        }
 
         // If we have less files than process,
         // reassign processes to number of files.

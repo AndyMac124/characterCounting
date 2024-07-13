@@ -13,8 +13,6 @@
 
 #include "file_handling.h"
 
-#define MAX_FILENAME 256
-
 /**
  * get_num_files() - Calculates the number of files in given directory
  * @arg1: pathname of directory to search inside
@@ -28,6 +26,10 @@ int get_num_files(const char* directory)
         int count = 0;
 
         dp = opendir(directory);
+
+        if (!dp) {
+                return(-1);
+        }
 
         while ((dirp = readdir(dp)) != NULL) {
                 /* Confirming file type and ignoring hidden files.
@@ -61,6 +63,11 @@ void get_file_names(char** filesArray, const char* directory)
         struct dirent* dirp;
         dp = opendir(directory);
         int index = 0;
+
+        if (!dp) {
+                perror("Failed to open directory");
+                exit(EXIT_FAILURE);
+        }
 
         while((dirp = readdir(dp)) != NULL) {
                 /* Confirming file type and ignoring hidden files.
@@ -104,7 +111,7 @@ long calc_file_counts(char inFile[], long char_stats[], const char* directory)
         FILE* file = fopen(cur_fname, "r");
         if (file == NULL) {
                 perror("Failed to open specified file");
-                exit(1);
+                exit(EXIT_FAILURE);
         }
 
         char c;
@@ -113,7 +120,7 @@ long calc_file_counts(char inFile[], long char_stats[], const char* directory)
         while((c = fgetc(file))) {
                 if (c == EOF) {
                         break;
-                } else if ((tolower(c)-'a') >= 0 && (tolower(c)-'a') < 26) {
+                } else if ((tolower(c)-'a') >= 0 && (tolower(c)-'a') < ALL_CHARS) {
                         char_stats[tolower(c) - 'a'] += 1;
                 } else {
                         continue;
