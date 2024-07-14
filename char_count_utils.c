@@ -13,7 +13,7 @@
 #include "char_count_utils.h"
 
 /**
- * valid_directory() - Checks if argument is a valid directroy.
+ * valid_directory() - Checks if argument is a valid directory.
  * @arg1: directory name to check.
  *
  * Simply checks it can open the given directory.
@@ -37,7 +37,10 @@ char* valid_directory(char *dir_name)
         DIR *dir = opendir(dir_name);
 
         if (dir) {
-                closedir(dir);
+                if (closedir(dir) == -1) {
+                        perror("Failed to close directory");
+                        exit(EXIT_FAILURE);
+                }
                 return dir_name;
         } else {
                 perror("Could not access directory");

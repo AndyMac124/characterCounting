@@ -125,7 +125,10 @@ int main (int argc, char *argv[])
                 send_subtotal(char_counts, NUM_CHARS);
                 read_subtotal(char_counts, false, NUM_CHARS);
                 for (int k = 1; k < nprocs; k++) {
-                        wait(NULL);
+                        if (wait(NULL) == -1) {
+                                perror("Failed while waiting for child");
+                                exit(EXIT_FAILURE);
+                        }
                 }
                 report_totals(char_counts, NUM_CHARS);
         }

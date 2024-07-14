@@ -42,7 +42,10 @@ int get_num_files(const char* directory)
                 }
         }
 
-        closedir(dp);
+        if (closedir(dp) == -1) {
+                perror("Failed to close directory");
+                exit(EXIT_FAILURE);
+        }
 
         return count;
 }
@@ -79,13 +82,27 @@ void get_file_names(char** filesArray, const char* directory)
                         // Allocating the space for the name
                         filesArray[index] = (char*)malloc((strlen
                                 (dirp->d_name) + 1) * sizeof(char));
+                        // Checking memory was allocated
+                        if (filesArray[index] == NULL) {
+                                perror("Couldn't allocate memory for files");
+                                closedir(dp);
+                                exit(EXIT_FAILURE);
+                        }
                         // Copying the name into the index
-                        strcpy(filesArray[index], dirp->d_name);
+                        if (strcpy(filesArray[index], dirp->d_name) == NULL) {
+                                perror("Failed to copy string");
+                                free(filesArray[index]);
+                                closedir(dp);
+                                exit(EXIT_FAILURE);
+                        }
                         index++;
                 }
         }
 
-        closedir(dp);
+        if (closedir(dp) == -1) {
+                perror("Failed to close directory");
+                exit(EXIT_FAILURE);
+        }
 }
 
 /**
@@ -130,7 +147,10 @@ long calc_file_counts(char inFile[], long char_stats[], const char* directory)
                 char_count += 1;
         }
 
-        fclose(file);
+        if (fclose(file) == EOF) {
+                perror("Failed to close file");
+                exit(EXIT_FAILURE);
+        }
 
         return char_count;
 }
