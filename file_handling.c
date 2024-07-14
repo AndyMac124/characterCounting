@@ -1,4 +1,4 @@
-/*
+/**
  * File: file_handling.c
  * Author: Andrew McKenzie
  * UNE Email: amcken33@myune.edu.au
@@ -28,7 +28,8 @@ int get_num_files(const char* directory)
         dp = opendir(directory);
 
         if (!dp) {
-                return(-1);
+                perror("Failed to open directory");
+                exit(EXIT_FAILURE);
         }
 
         while ((dirp = readdir(dp)) != NULL) {
@@ -120,7 +121,8 @@ long calc_file_counts(char inFile[], long char_stats[], const char* directory)
         while((c = fgetc(file))) {
                 if (c == EOF) {
                         break;
-                } else if ((tolower(c)-'a') >= 0 && (tolower(c)-'a') < ALL_CHARS) {
+                } else if ((tolower(c)-'a') >= 0
+                        && (tolower(c)-'a') < NUM_CHARS) {
                         char_stats[tolower(c) - 'a'] += 1;
                 } else {
                         continue;
@@ -131,4 +133,45 @@ long calc_file_counts(char inFile[], long char_stats[], const char* directory)
         fclose(file);
 
         return char_count;
+}
+
+/**
+ * process_files() - Processes all files allocated to given process
+ * @arg1: Array of file names
+ * @arg2: Number of files for this process
+ * @arg3: First file index for this process
+ * @arg4: Array to store frequencies in
+ * @arg5: Directory name to go inside
+ *
+ * Function will start from the index given by start file and progress
+ * through the given number of files calling the calc_file_counts and
+ * store the frequencies in the given array.
+ *
+ * Return: void
+ */
+void process_files(char *files[], int numFiles, int startFile,
+                   long char_counts[], const char* dir)
+{
+        for (int j = 0; j < numFiles; j++) {
+                calc_file_counts(files[startFile + j],
+                                 char_counts, dir);
+        }
+}
+
+/**
+ * free_files() - Frees allocated memory for the given files array
+ * @arg1: Files array to free
+ * @arg2: length of array
+ *
+ * Function to free all memory allocated for the files array.
+ *
+ * Return: Void
+ */
+void free_files(char *files[], int numFiles)
+{
+        for (int l = 0; l < numFiles; l++) {
+                if (files[l] != NULL) {
+                        free(files[l]);
+                }
+        }
 }

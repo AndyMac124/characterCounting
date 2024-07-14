@@ -1,4 +1,4 @@
-/*
+/**
  * File: char_count_utils.c
  * Author: Andrew McKenzie
  * UNE Email: amcken33@myune.edu.au
@@ -20,7 +20,7 @@
  *
  * Return: Int, zero on success, negative on failure.
  */
-int valid_directory(char *dir_name)
+char* valid_directory(char *dir_name)
 {
         // If the given directory started with a slash, remove it.
         if (dir_name[0] == '/') {
@@ -38,9 +38,11 @@ int valid_directory(char *dir_name)
 
         if (dir) {
                 closedir(dir);
-                return (0);
+                return dir_name;
+        } else {
+                perror("Could not access directory");
+                exit(EXIT_FAILURE);
         }
-        return (-1);
 }
 
 /**
@@ -58,13 +60,8 @@ int parse_args(int argc, char *argv[], int *nprocs)
 {
         // Checking number of args, and number of processes is int.
         if ((argc != 3) || ((*nprocs = atoi(argv[1])) <= 0)) {
-                fprintf(stderr, "Usage: %s nprocs\n", argv[0]);
+                fprintf(stderr, "Usage: %s nprocs directory\n", argv[0]);
                 return(-1);
-        }
-
-        if (valid_directory(argv[2]) < 0) {
-                perror("Could not access directory");
-                exit(EXIT_FAILURE);
         }
 
         return(0);
@@ -73,23 +70,24 @@ int parse_args(int argc, char *argv[], int *nprocs)
 /**
  * report_totals() - prints character counts to terminal.
  * @arg1: Array of character frequency counts to report.
+ * @arg2: Number of characters in analysis
  *
  * Finds the character with the highest count and uses it to
  * create a ratio of all other characters in the histogram.
  *
  * Return: void
  */
-void report_totals(long char_counts[])
+void report_totals(long char_counts[], int num_chars)
 {
         // Getting the character with highest count
         long max_count = 0;
-        for (int i = 0; i < 26; i++) {
+        for (int i = 0; i < num_chars; i++) {
                 if (char_counts[i] > max_count) {
                         max_count = char_counts[i];
                 }
         }
 
-        for (int j = 0; j < 26; j++) {
+        for (int j = 0; j < num_chars; j++) {
                 fprintf(stderr, "Process 1 got char %c: %ld \t| ", 'a' + j,
                         char_counts[j]);
                 // Char counts to double for increased accuracy.

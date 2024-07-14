@@ -1,4 +1,4 @@
-/*
+/**
  * File: ring_process.c
  * Author: Andrew McKenzie
  * UNE Email: amcken33@myune.edu.au
@@ -83,17 +83,18 @@ int add_new_node(int *pid)
 /**
  * send_subtotal() - Writes to standard out
  * @arg1: array of character frequency
+ * @arg2: Number of characters in analysis
  *
  * Function writes the given array of longs (representing the character
  * frequencies in this program) to standard out.
  *
  * Return: void
  */
-void send_subtotal(long char_counts[])
+void send_subtotal(long char_counts[], int num_chars)
 {
         int written;
         written = write(STDOUT_FILENO,
-                        char_counts, 26 * sizeof(long));
+                        char_counts, num_chars * sizeof(long));
         if (written < 0) {
                 perror("Error writing to standard out");
         }
@@ -104,21 +105,22 @@ void send_subtotal(long char_counts[])
  * @arg1: This processes contribution to the total character frequency counts
  * @arg2: Boolean of whether this process needs to add its count.
  *        Used for when the 'Mother' process receives the final count.
+ * @arg3: Number of characters in analysis
  *
  * Return: void
  */
-void read_subtotal(long char_counts[], bool to_add)
+void read_subtotal(long char_counts[], bool to_add, int num_chars)
 {
         int bytes;
 
         long temp_counts[26] = {0};
-        bytes = read(STDIN_FILENO, temp_counts, 26 * sizeof(long));
+        bytes = read(STDIN_FILENO, temp_counts, num_chars * sizeof(long));
 
         if (bytes < 0) {
                 perror("Error reading from standard in");
         }
 
-        for (int i = 0; i < 26; i++) {
+        for (int i = 0; i < num_chars; i++) {
                 if (to_add) {
                         char_counts[i] += temp_counts[i];
                 } else {

@@ -4,6 +4,7 @@
 #include <dirent.h>
 #include <sys/wait.h>
 #include <stdbool.h>
+#include <unistd.h>
 
 #include "ring_process.h"
 #include "file_handling.h"
@@ -52,64 +53,41 @@ int main (int argc, char *argv[])
         int i;          // Number of this process, starting with 1
         int childpid;   // Indicates process should spawn another
         int nprocs;     // Total number of processes in ring
-        long char_counts[ALL_CHARS] = {0}; // Holds count of the 26 characters
+        long char_counts[NUM_CHARS] = {0}; // Holds count of the 26 characters
+        int numFiles;   // To store the number of files in directory
+        int numFilesEach; // Number of files for each process to handle
 
         // Checking if the given args were correct
         if (parse_args(argc, argv, &nprocs) < 0) {
                 exit(EXIT_FAILURE);
         }
 
-        // Setting the number of processes in the ring
-        nprocs = atoi(argv[1]);
-
-        // If the given directory started with a slash, remove it.
-        if (argv[2][0] == '/') {
-                argv[2] = argv[2] + 1;
-        }
-
-        int length = strlen(argv[2]);
-
-        // If the given directory ended with a slash, remove it.
-        if (argv[2][length-1] == '/') {
-                argv[2][length - 1] = '\0';
-        }
-
         // Assigning the directory for the text files
-        const char* TEXT_DIR = argv[2];
+        const char* TEXT_DIR = valid_directory(argv[2]);
 
         // Calculating the number of files
-        int numFiles = get_num_files(TEXT_DIR);
+        numFiles = get_num_files(TEXT_DIR);
 
-        if (numFiles < 0) {
-                perror("Failed to open directory");
-                exit(EXIT_FAILURE);
+        // Number of files each process will handle, If more processes
+        // than files, assign 1 each for now.
+        if ((numFilesEach = numFiles / nprocs) < 1) {
+                numFilesEach = 1;
         }
-
-        // If we have less files than process,
-        // reassign processes to number of files.
-        if (numFiles < nprocs) {
-                nprocs = numFiles;
-        }
-
-        // Number of files each process will handle
-        int numFilesEach = numFiles / nprocs;
-        // The last child in ring, must also do the remainder.
-        int remainder = numFiles % nprocs;
 
         // Allocating array to store each file name
         char *files[numFiles];
-        // Setting initial array values
-        memset(files, 0, sizeof(files));
+
         // Adding file names to the array
         get_file_names(files, TEXT_DIR);
 
+        /* RING PROCESSING */
         // Making trivial ring with 1 process
         if (make_trivial_ring() < 0) {
                 perror("Could not add new node to ring");
                 exit(EXIT_FAILURE);
         }
 
-        // Adding more processes based on requested amount
+        // Adding more processes based on requested amount or number of files
         for (i = 1; i < nprocs; i++) {
                 if (add_new_node(&childpid) < 0) {
                         perror("Could not add new node to ring");
@@ -120,47 +98,40 @@ int main (int argc, char *argv[])
                 }
         }
 
-        /* RING PROCESS */
         // Number of files to process for this node
         int startFile = numFilesEach * (i - 1);
 
         // The final node takes on the remainder from the division
-        if (i == nprocs) {
-                numFilesEach += remainder;
+        if (i == nprocs && i < numFiles) {
+                numFilesEach += numFiles % nprocs;
         }
 
-        // Each process must calculate its files, then wait for parent to
-        // pipe through.
-        for (int j = 0; j < numFilesEach; j++) {
-                calc_file_counts(files[startFile + j],
-                               char_counts, TEXT_DIR);
+        // Each process must calculate its files frequencies.
+        if (i <= numFiles) {
+                process_files(files, numFilesEach, startFile,
+                              char_counts, TEXT_DIR);
         }
 
-        /* all processes */
         // If not the Mother process read and send counts
         if (i > 1) {
-                read_subtotal(char_counts, true);
-                send_subtotal(char_counts);
+                read_subtotal(char_counts, true, NUM_CHARS);
+                send_subtotal(char_counts, NUM_CHARS);
         }
 
         /* If is the Mother process send counts, wait for counts to get back,
          * then wait for all processes to finish and report the totals.
          */
         if (i == 1) {
-                send_subtotal(char_counts);
-                read_subtotal(char_counts, false);
+                send_subtotal(char_counts, NUM_CHARS);
+                read_subtotal(char_counts, false, NUM_CHARS);
                 for (int k = 1; k < nprocs; k++) {
                         wait(NULL);
                 }
-                report_totals(char_counts);
+                report_totals(char_counts, NUM_CHARS);
         }
 
         // Freeing allocated memory
-        for (int l = 0; l < numFiles; l++) {
-                if (files[l] != NULL) {
-                        free(files[l]);
-                }
-        }
+        free_files(files, numFiles);
 
         exit(EXIT_SUCCESS);
 }
