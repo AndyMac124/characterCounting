@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <string.h>
+#include <math.h>
 
 #include "char_count_utils.h"
 
@@ -20,28 +21,28 @@
  *
  * Return: Int, zero on success, negative on failure.
  */
-char* valid_directory(char *dir_name)
+char* valid_directory(char *dirName)
 {
         // If the given directory started with a slash, remove it.
-        if (dir_name[0] == '/') {
-                dir_name = dir_name + 1;
+        if (dirName[0] == '/') {
+                dirName = dirName + 1;
         }
 
-        int length = strlen(dir_name);
+        int length = strlen(dirName);
 
         // If the given directory ended with a slash, remove it.
-        if (dir_name[length-1] == '/') {
-                dir_name[length - 1] = '\0';
+        if (dirName[length-1] == '/') {
+                dirName[length - 1] = '\0';
         }
 
-        DIR *dir = opendir(dir_name);
+        DIR *dir = opendir(dirName);
 
         if (dir) {
                 if (closedir(dir) == -1) {
                         perror("Failed to close directory");
                         exit(EXIT_FAILURE);
                 }
-                return dir_name;
+                return dirName;
         } else {
                 perror("Could not access directory");
                 exit(EXIT_FAILURE);
@@ -63,7 +64,7 @@ int parse_args(int argc, char *argv[], int *nprocs)
 {
         // Checking number of args, and number of processes is int.
         if ((argc != 3) || ((*nprocs = atoi(argv[1])) <= 0)) {
-                fprintf(stderr, "Usage: %s nprocs directory\n", argv[0]);
+                fprintf(stderr, "Usage: %s <number of processes> <directory>\n", argv[0]);
                 return(-1);
         }
 
@@ -80,23 +81,23 @@ int parse_args(int argc, char *argv[], int *nprocs)
  *
  * Return: void
  */
-void report_totals(long char_counts[], int num_chars)
+void report_totals(long charCounts[], int numChars)
 {
-        // Getting the character with highest count
-        long max_count = 0;
-        for (int i = 0; i < num_chars; i++) {
-                if (char_counts[i] > max_count) {
-                        max_count = char_counts[i];
+        // Getting the character with the highest count
+        long maxCount = 0;
+        for (int i = 0; i < numChars; i++) {
+                if (charCounts[i] > maxCount) {
+                        maxCount = charCounts[i];
                 }
         }
 
-        for (int j = 0; j < num_chars; j++) {
+        for (int j = 0; j < numChars; j++) {
                 fprintf(stderr, "Process 1 got char %c: %ld \t| ", 'a' + j,
-                        char_counts[j]);
+                        charCounts[j]);
                 // Char counts to double for increased accuracy.
-                int histogram_bar = (int)(((double)char_counts[j]/max_count) *
-                                          BARLENGTH);
-                for (int k = 0; k < histogram_bar; k++) {
+                double ratio = (double)charCounts[j] / maxCount * BARLENGTH;
+                int histogramBar = (int)ceil(ratio);
+                for (int k = 0; k < histogramBar; k++) {
                         fprintf(stderr, "*");
                 }
                 fprintf(stderr, "\n");

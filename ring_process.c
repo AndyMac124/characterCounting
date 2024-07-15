@@ -90,11 +90,11 @@ int add_new_node(int *pid)
  *
  * Return: void
  */
-void send_subtotal(long char_counts[], int num_chars)
+void send_subtotal(long charCounts[], int num_chars)
 {
         int written;
         written = write(STDOUT_FILENO,
-                        char_counts, num_chars * sizeof(long));
+                        charCounts, num_chars * sizeof(long));
         if (written < 0) {
                 perror("Error writing to standard out");
         }
@@ -109,23 +109,23 @@ void send_subtotal(long char_counts[], int num_chars)
  *
  * Return: void
  */
-void read_subtotal(long char_counts[], bool to_add, int num_chars)
+void read_subtotal(long charCounts[], bool toAdd, int numChars)
 {
         int bytes;
 
-        long temp_counts[26] = {0};
-        bytes = read(STDIN_FILENO, temp_counts, num_chars * sizeof(long));
+        long tempCounts[26] = {0};
+        bytes = read(STDIN_FILENO, tempCounts, numChars * sizeof(long));
 
         if (bytes < 0) {
                 perror("Error reading from standard in");
         }
 
-        for (int i = 0; i < num_chars; i++) {
-                if (to_add) {
-                        char_counts[i] += temp_counts[i];
+        for (int i = 0; i < numChars; i++) {
+                if (toAdd) {
+                        charCounts[i] += tempCounts[i];
                 } else {
                         // When final count is received by Mother process
-                        char_counts[i] = temp_counts[i];
+                        charCounts[i] = tempCounts[i];
                 }
         }
 }

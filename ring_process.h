@@ -5,7 +5,7 @@
 
 int make_trivial_ring(void);
 int add_new_node(int *pid);
-void send_subtotal(long char_counts[], int num_chars);
-void read_subtotal(long char_counts[], bool to_add, int num_chars);
+void send_subtotal(long charCounts[], int numChars);
+void read_subtotal(long charCounts[], bool toAdd, int numChars);
 
 #endif //A1_RING_PROCESS_H

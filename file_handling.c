@@ -119,32 +119,32 @@ void get_file_names(char** filesArray, const char* directory)
  *
  * Return: The array of numeric count of each character
  */
-long calc_file_counts(char inFile[], long char_stats[], const char* directory)
+long calc_file_counts(char inFile[], long charStats[], const char* directory)
 {
-        char cur_fname[MAX_FILENAME] = ""; // Allocating array space
-        strcpy(cur_fname, directory);  // Copying directory name into array
-        strcat(cur_fname, "/"); // Adding slash for subdirectory
-        strcat(cur_fname, inFile); // Adding file name
+        char fileName[MAX_FILENAME] = ""; // Allocating array space
+        strcpy(fileName, directory);  // Copying directory name into array
+        strcat(fileName, "/"); // Adding slash for subdirectory
+        strcat(fileName, inFile); // Adding file name
 
-        FILE* file = fopen(cur_fname, "r");
+        FILE* file = fopen(fileName, "r");
         if (file == NULL) {
                 perror("Failed to open specified file");
                 exit(EXIT_FAILURE);
         }
 
         char c;
-        long char_count = 0;
+        long charCount = 0;
 
         while((c = fgetc(file))) {
                 if (c == EOF) {
                         break;
                 } else if ((tolower(c)-'a') >= 0
                         && (tolower(c)-'a') < NUM_CHARS) {
-                        char_stats[tolower(c) - 'a'] += 1;
+                        charStats[tolower(c) - 'a'] += 1;
                 } else {
                         continue;
                 }
-                char_count += 1;
+                charCount += 1;
         }
 
         if (fclose(file) == EOF) {
@@ -152,7 +152,7 @@ long calc_file_counts(char inFile[], long char_stats[], const char* directory)
                 exit(EXIT_FAILURE);
         }
 
-        return char_count;
+        return charCount;
 }
 
 /**
@@ -170,11 +170,11 @@ long calc_file_counts(char inFile[], long char_stats[], const char* directory)
  * Return: void
  */
 void process_files(char *files[], int numFiles, int startFile,
-                   long char_counts[], const char* dir)
+                   long charCounts[], const char* dir)
 {
         for (int j = 0; j < numFiles; j++) {
                 calc_file_counts(files[startFile + j],
-                                 char_counts, dir);
+                                 charCounts, dir);
         }
 }
 
