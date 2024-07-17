@@ -4,34 +4,49 @@
 #include <dirent.h>
 #include <sys/wait.h>
 #include <stdbool.h>
-#include <unistd.h>
 
 #include "ring_process.h"
 #include "file_handling.h"
 #include "char_count_utils.h"
 
 
-/**
- * File: char_count.c
+/*H*
+ * FILENAME: char_count.c
  *
- * Author: Andrew McKenzie
- * UNE Email: amcken33@myune.edu.au
- * Student Number: 220263507
+ * AUTHOR: Andrew McKenzie
+ * UNE EMAIL: amcken33@myune.edu.au
+ * STUDENT NUMBER: 220263507
  *
- * Purpose: This program creates a ring of processes and a directory containing
- * text files and divides them between the ring of processes. The processes
- * count the frequency of the basic A-Z characters and pass them around the
- * ring until the original mother process gets them and prints their totals
- * and a histogram of their frequencies.
+ * PURPOSE:
+ * Perform frequency analysis on a subdirectory using inter process
+ * communication and out the totals and relative histogram.
  *
- * Compiling: The include makefile can be run with the 'make' command.
+ * This program creates a ring of processes and accesses a subdirectory
+ * containing text files and divides them between the ring of processes.
+ * The processes count the frequency of the basic A-Z characters without
+ * case sensitivity and pass them around the ring until the original
+ * mother process gets them and prints the totals and a histogram
+ * of their frequencies.
  *
- * Running: The program is run by the following:
+ * COMPILING: The included makefile can be run with the 'make' command.
+ *
+ * RUNNING: The program is run by the following:
  *          ./char_count <int - number of processes> <directory>
  *
+ * NOTES:
+ * The directory should be a subdirectory. If forward or
+ * backslashes are added the program will remove these in an attempt
+ * to save the situation.
+ *
+ * As per the Linux Kernel C programming guide:
+ * - Function names use snake case for emphasis.
+ * - Variables use camel case for brevity.
+ * - Constants and macros use snake case and are upper case.
+ * - Everything except function declarations use K&R style braces.
+ * - Functions use Allman style braces.
+ *
  * For more detailed instructions, please see the README.md
- */
-
+ *H*/
 
 
 /**
@@ -48,7 +63,7 @@
  *
  * Return: Int, zero on success, non-zero on failure.
  */
-int main (int argc, char *argv[])
+int main(int argc, char *argv[])
 {
         int i;          // Number of this process, starting with 1
         int childpid;   // Indicates process should spawn another
@@ -108,7 +123,7 @@ int main (int argc, char *argv[])
                 filesEach += numFiles % nProcs;
         }
 
-        // Each process must calculate its files frequencies.
+        // Each process must calculate its own files frequencies.
         process_files(files, filesEach, startFile,
                       charCounts, TEXT_DIR);
 

@@ -1,9 +1,16 @@
-/**
- * File: char_count_utils.c
- * Author: Andrew McKenzie
- * UNE Email: amcken33@myune.edu.au
- * Student Number: 220263507
- */
+/*H*
+ * FILENAME: char_count_utils.c
+ *
+ * AUTHOR: Andrew McKenzie
+ * UNE EMAIL: amcken33@myune.edu.au
+ * STUDENT NUMBER: 220263507
+ *
+ * PURPOSE: This file supports the char_count.c program by containing
+ * the various utilities required by the program. Currently, the
+ * subdirectory validation, command line argument parsing and reporting
+ * the totals back to the terminal.
+ *
+ *H*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,11 +20,14 @@
 
 #include "char_count_utils.h"
 
+
 /**
  * valid_directory() - Checks if argument is a valid directory.
  * @arg1: directory name to check.
  *
  * Simply checks it can open the given directory.
+ * Will remove forward slashes from start or end as an effort
+ * to save the program from an error.
  *
  * Return: Int, zero on success, negative on failure.
  */
@@ -49,6 +59,7 @@ char* valid_directory(char *dirName)
         }
 }
 
+
 /**
  * parse_args() - Checks args are correct
  * @arg1: Number of arguments in argv
@@ -64,12 +75,14 @@ int parse_args(int argc, char *argv[], int *nprocs)
 {
         // Checking number of args, and number of processes is int.
         if ((argc != 3) || ((*nprocs = atoi(argv[1])) <= 0)) {
-                fprintf(stderr, "Usage: %s <number of processes> <directory>\n", argv[0]);
+                fprintf(stderr, "Usage: %s <number of processes> "
+                                "<directory>\n", argv[0]);
                 return(-1);
         }
 
         return(0);
 }
+
 
 /**
  * report_totals() - prints character counts to terminal.

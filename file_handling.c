@@ -1,9 +1,14 @@
-/**
- * File: file_handling.c
- * Author: Andrew McKenzie
- * UNE Email: amcken33@myune.edu.au
- * Student Number: 220263507
- */
+/*H*
+ * FILENAME: file_handling.c
+ *
+ * AUTHOR: Andrew McKenzie
+ * UNE EMAIL: amcken33@myune.edu.au
+ * STUDENT NUMBER: 220263507
+ *
+ * PURPOSE: This file supports the char_count.c program by containing
+ * the necessary file handling utilities.
+ *
+ *H*/
 
 #include <stdlib.h>
 #include <string.h>
@@ -12,6 +17,7 @@
 #include <ctype.h>
 
 #include "file_handling.h"
+
 
 /**
  * get_num_files() - Calculates the number of files in given directory
@@ -49,6 +55,7 @@ int get_num_files(const char* directory)
 
         return count;
 }
+
 
 /**
  * get_file_names() - Extracts filenames from inside directory
@@ -105,6 +112,7 @@ void get_file_names(char** filesArray, const char* directory)
         }
 }
 
+
 /**
  * calc_file_counts() - Counts frequency of each char in given file
  * @arg1: File name to access
@@ -155,6 +163,7 @@ long calc_file_counts(char inFile[], long charStats[], const char* directory)
         return charCount;
 }
 
+
 /**
  * process_files() - Processes all files allocated to given process
  * @arg1: Array of file names
@@ -177,6 +186,7 @@ void process_files(char *files[], int numFiles, int startFile,
                                  charCounts, dir);
         }
 }
+
 
 /**
  * free_files() - Frees allocated memory for the given files array

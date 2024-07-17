@@ -1,15 +1,22 @@
-/**
- * File: ring_process.c
- * Author: Andrew McKenzie
- * UNE Email: amcken33@myune.edu.au
- * Student Number: 220263507
- */
+/*H*
+ * FILENAME: ring_process.c
+ *
+ * AUTHOR: Andrew McKenzie
+ * UNE EMAIL: amcken33@myune.edu.au
+ * STUDENT NUMBER: 220263507
+ *
+ * PURPOSE: This file supports the char_count.c program by containing
+ * the necessary components for creating the ring of processes and
+ * sending and receiving between them.
+ *
+ *H*/
 
 #include <unistd.h>
 #include <stdbool.h>
 #include <stdio.h>
 
 #include "ring_process.h"
+
 
 /**
  * make_trivial_ring() - Creates pipe
@@ -37,6 +44,7 @@ int make_trivial_ring(void)
 
         return(0);
 }
+
 
 /**
  * add_new_node() - Adds new node to the ring.
@@ -80,6 +88,7 @@ int add_new_node(int *pid)
         return(0);
 }
 
+
 /**
  * send_subtotal() - Writes to standard out
  * @arg1: array of character frequency
@@ -99,6 +108,7 @@ void send_subtotal(long charCounts[], int num_chars)
                 perror("Error writing to standard out");
         }
 }
+
 
 /**
  * read_subtotal() - Reads from standard in
