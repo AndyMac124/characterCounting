@@ -181,8 +181,8 @@ long calc_file_counts(char inFile[], long charStats[], const char* directory)
 void process_files(char *files[], int numFiles, int startFile,
                    long charCounts[], const char* dir)
 {
-        for (int j = 0; j < numFiles; j++) {
-                calc_file_counts(files[startFile + j],
+        for (int i = 0; i < numFiles; i++) {
+                calc_file_counts(files[startFile + i],
                                  charCounts, dir);
         }
 }
@@ -199,9 +199,9 @@ void process_files(char *files[], int numFiles, int startFile,
  */
 void free_files(char *files[], int numFiles)
 {
-        for (int l = 0; l < numFiles; l++) {
-                if (files[l] != NULL) {
-                        free(files[l]);
+        for (int i = 0; i < numFiles; i++) {
+                if (files[i] != NULL) {
+                        free(files[i]);
                 }
         }
 }

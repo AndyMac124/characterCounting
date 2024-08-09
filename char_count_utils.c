@@ -19,6 +19,7 @@
 #include <math.h>
 
 #include "char_count_utils.h"
+#include "file_handling.h"
 
 
 /**
@@ -87,28 +88,27 @@ int parse_args(int argc, char *argv[], int *nprocs)
 /**
  * report_totals() - prints character counts to terminal.
  * @arg1: Array of character frequency counts to report.
- * @arg2: Number of characters in analysis
  *
  * Finds the character with the highest count and uses it to
  * create a ratio of all other characters in the histogram.
  *
  * Return: void
  */
-void report_totals(long charCounts[], int numChars)
+void report_totals(long charCounts[])
 {
         // Getting the character with the highest count
         long maxCount = 0;
-        for (int i = 0; i < numChars; i++) {
+        for (int i = 0; i < NUM_CHARS; i++) {
                 if (charCounts[i] > maxCount) {
                         maxCount = charCounts[i];
                 }
         }
 
-        for (int j = 0; j < numChars; j++) {
+        for (int j = 0; j < NUM_CHARS; j++) {
                 fprintf(stderr, "Process 1 got char %c: %ld \t| ", 'a' + j,
                         charCounts[j]);
                 // Char counts to double for increased accuracy.
-                double ratio = (double)charCounts[j] / maxCount * BARLENGTH;
+                double ratio = (double)charCounts[j] / maxCount * BAR_LENGTH;
                 int histogramBar = (int)ceil(ratio);
                 for (int k = 0; k < histogramBar; k++) {
                         fprintf(stderr, "*");

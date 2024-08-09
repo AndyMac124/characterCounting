@@ -1,15 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <dirent.h>
-#include <sys/wait.h>
-#include <stdbool.h>
-
-#include "ring_process.h"
-#include "file_handling.h"
-#include "char_count_utils.h"
-
-
 /*H*
  * FILENAME: char_count.c
  *
@@ -41,13 +29,23 @@
  * As per the Linux Kernel C programming guide:
  * - Function names use snake case for emphasis.
  * - Variables use camel case for brevity.
- * - Constants and macros use snake case and are upper case.
+ * - Global variables, constants and macros use snake case and are upper case.
  * - Everything except function declarations use K&R style braces.
  * - Functions use Allman style braces.
  *
  * For more detailed instructions, please see the README.md
  *H*/
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <dirent.h>
+#include <sys/wait.h>
+#include <stdbool.h>
+
+#include "ring_process.h"
+#include "file_handling.h"
+#include "char_count_utils.h"
 
 /**
  * main() - Main function for character frequency counting program.
@@ -129,20 +127,20 @@ int main(int argc, char *argv[])
 
         // If not the Mother process read and send counts
         if (i > 1) {
-                read_subtotal(charCounts, true, NUM_CHARS);
-                send_subtotal(charCounts, NUM_CHARS);
+                read_subtotal(charCounts, true);
+                send_subtotal(charCounts);
         }
 
         /* If is the Mother process send counts, wait for counts to get back,
          * then wait for all processes to finish and report the totals.
          */
         if (i == 1) {
-                send_subtotal(charCounts, NUM_CHARS);
-                read_subtotal(charCounts, false, NUM_CHARS);
-                for (int k = 1; k < nProcs; k++) {
+                send_subtotal(charCounts);
+                read_subtotal(charCounts, false);
+                for (int j = 1; j < nProcs; j++) {
                         wait(NULL);
                 }
-                report_totals(charCounts, NUM_CHARS);
+                report_totals(charCounts);
         }
 
         // Freeing allocated memory

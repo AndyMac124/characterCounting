@@ -16,7 +16,7 @@
 #include <stdio.h>
 
 #include "ring_process.h"
-
+#include "file_handling.h"
 
 /**
  * make_trivial_ring() - Creates pipe
@@ -92,19 +92,21 @@ int add_new_node(int *pid)
 /**
  * send_subtotal() - Writes to standard out
  * @arg1: array of character frequency
- * @arg2: Number of characters in analysis
  *
  * Function writes the given array of longs (representing the character
  * frequencies in this program) to standard out.
  *
  * Return: void
  */
-void send_subtotal(long charCounts[], int num_chars)
+void send_subtotal(long charCounts[])
 {
-        int written;
-        written = write(STDOUT_FILENO,
-                        charCounts, num_chars * sizeof(long));
-        if (written < 0) {
+        int bytes;
+
+        bytes = write(STDOUT_FILENO,
+                      charCounts, NUM_BYTES);
+
+        // Checking all bytes were successfully sent
+        if (bytes != NUM_BYTES) {
                 perror("Error writing to standard out");
         }
 }
@@ -115,27 +117,30 @@ void send_subtotal(long charCounts[], int num_chars)
  * @arg1: This processes contribution to the total character frequency counts
  * @arg2: Boolean of whether this process needs to add its count.
  *        Used for when the 'Mother' process receives the final count.
- * @arg3: Number of characters in analysis
  *
  * Return: void
  */
-void read_subtotal(long charCounts[], bool toAdd, int numChars)
+void read_subtotal(long charCounts[], bool toAdd)
 {
         int bytes;
 
-        long tempCounts[26] = {0};
-        bytes = read(STDIN_FILENO, tempCounts, numChars * sizeof(long));
+        // Setting all elements to 0
+        long incomingCounts[NUM_CHARS] = {0};
 
+        // Reading in the count for all characters
+        bytes = read(STDIN_FILENO, incomingCounts, NUM_BYTES);
+
+        // Checking for a read error (-1)
         if (bytes < 0) {
                 perror("Error reading from standard in");
         }
 
-        for (int i = 0; i < numChars; i++) {
+        for (int i = 0; i < NUM_CHARS; i++) {
                 if (toAdd) {
-                        charCounts[i] += tempCounts[i];
+                        charCounts[i] += incomingCounts[i];
                 } else {
                         // When final count is received by Mother process
-                        charCounts[i] = tempCounts[i];
+                        charCounts[i] = incomingCounts[i];
                 }
         }
 }

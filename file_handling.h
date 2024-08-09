@@ -1,8 +1,8 @@
 #ifndef A1_FILE_HANDLING_H
 #define A1_FILE_HANDLING_H
 
-#define MAX_FILENAME 256
-#define NUM_CHARS 26
+#define MAX_FILENAME 256 // Max file name length
+#define NUM_CHARS 26 // Number of characters in the analysis
 
 int get_num_files(const char* directory);
 void get_file_names(char** filesArray, const char* directory);

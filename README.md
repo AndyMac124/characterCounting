@@ -5,8 +5,8 @@
 
 ## Overview:
 This program is designed to perform a frequency analysis of basic A-Z 
-characters in all files within a given directory 
-with the exception of the `.` `..` and hidden files.
+characters in all files within a given directory except for 
+the `.` `..` and hidden files.
 
 It will create a ring of processes based on the given user input and then access 
 the given directory and divide the files between the number of process. 
