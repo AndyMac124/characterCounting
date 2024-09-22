@@ -1,8 +1,3 @@
-# COSC330 A1
-
-#### Author: Andrew McKenzie
-#### Student ID: 220263507
-
 ## Overview:
 This program is designed to perform a frequency analysis of basic A-Z 
 characters in all files within a given directory except for 
