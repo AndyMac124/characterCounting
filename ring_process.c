@@ -2,8 +2,6 @@
  * FILENAME: ring_process.c
  *
  * AUTHOR: Andrew McKenzie
- * UNE EMAIL: amcken33@myune.edu.au
- * STUDENT NUMBER: 220263507
  *
  * PURPOSE: This file supports the char_count.c program by containing
  * the necessary components for creating the ring of processes and
