@@ -2,8 +2,6 @@
  * FILENAME: char_count_utils.c
  *
  * AUTHOR: Andrew McKenzie
- * UNE EMAIL: amcken33@myune.edu.au
- * STUDENT NUMBER: 220263507
  *
  * PURPOSE: This file supports the char_count.c program by containing
  * the various utilities required by the program. Currently, the
